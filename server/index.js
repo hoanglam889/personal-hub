@@ -7,22 +7,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. Kết nối MySQL (Đọc từ biến môi trường, có hỗ trợ SSL cho Aiven)
-const db = mysql.createConnection({
+// 1. Kết nối MySQL dạng Pool để tự động tái kết nối, thích hợp cho Vercel Serverless
+const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'to-do-list',
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : null
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Lỗi kết nối MySQL: ' + err.stack);
-    return;
-  }
-  console.log('Đã thông mạch máu với MySQL thành công!');
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : null,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // 2. API lấy Mục tiêu kèm theo các Việc nhỏ (Todos)
