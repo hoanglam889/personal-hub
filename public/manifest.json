@@ -1,0 +1,29 @@
+{
+  "short_name": "Lam's Hub",
+  "name": "Lam's Personal Hub",
+  "description": "Ứng dụng quản lý mục tiêu và thu chi tài chính của Lâm",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#16171d",
+  "theme_color": "#0d6efd",
+  "display": "standalone",
+  "orientation": "portrait"
+}
