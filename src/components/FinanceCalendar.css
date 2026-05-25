@@ -1,0 +1,153 @@
+/* CSS tùy chỉnh cho bộ lịch Lịch Lãm Hub - Phong cách Dark Mode */
+
+.custom-calendar-container {
+  background-color: #121212;
+  border-radius: 16px;
+  padding: 12px;
+  color: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.custom-calendar-container .react-calendar {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  color: #ffffff;
+}
+
+/* Thanh điều hướng tháng/năm ở trên */
+.custom-calendar-container .react-calendar__navigation {
+  display: flex;
+  margin-bottom: 12px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.custom-calendar-container .react-calendar__navigation button {
+  color: #ffffff;
+  min-width: 40px;
+  background: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  padding: 8px 4px;
+}
+
+.custom-calendar-container .react-calendar__navigation button:enabled:hover,
+.custom-calendar-container .react-calendar__navigation button:enabled:focus {
+  background-color: #2d2d2d;
+  border-radius: 8px;
+}
+
+.custom-calendar-container .react-calendar__navigation__label {
+  font-weight: bold;
+}
+
+/* Các nhãn thứ trong tuần (T2, T3... CN) */
+.custom-calendar-container .react-calendar__month-view__weekdays {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #777777;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #1e1e1e;
+  padding-bottom: 4px;
+}
+
+.custom-calendar-container .react-calendar__month-view__weekdays__weekday {
+  padding: 2px 0;
+}
+
+/* Cột thứ 7 (màu xanh dương nhạt) và cột Chủ nhật (đỏ nhạt) */
+.custom-calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(6) {
+  color: #3f83f8;
+}
+.custom-calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(7) {
+  color: #f05252;
+}
+
+/* Định dạng từng ô ngày trong lưới lịch */
+.custom-calendar-container .react-calendar__month-view__days__day {
+  background: transparent;
+  border: 1px solid #1a1a1a;
+  color: #ffffff;
+  padding: 4px 2px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 0.85rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-calendar-container .react-calendar__month-view__days__day:enabled:hover,
+.custom-calendar-container .react-calendar__month-view__days__day:enabled:focus {
+  background-color: #242424;
+  cursor: pointer;
+}
+
+/* Các ngày ngoài tháng hiện tại (làm mờ đi) */
+.custom-calendar-container .react-calendar__month-view__days__day--neighboringMonth {
+  opacity: 0.2;
+}
+
+/* Ô ngày hiện tại */
+.custom-calendar-container .react-calendar__tile--now {
+  background-color: #1d1d1d;
+  font-weight: bold;
+  border: 1px solid #d97706 !important; /* Viền vàng cam */
+}
+
+/* Ô ngày đang được chọn */
+.custom-calendar-container .react-calendar__tile--active {
+  background-color: #1e3a8a !important; /* Xanh navy */
+  border: 1px solid #3b82f6 !important; /* Viền xanh dương sáng */
+  color: #ffffff !important;
+}
+
+/* Container số tiền nhỏ ở dưới số ngày */
+.tile-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Định dạng chữ số tiền */
+.tile-amount {
+  font-size: 0.58rem;
+  font-weight: 600;
+  line-height: 1.1;
+  width: 100%;
+  text-align: center;
+}
+
+.tile-amount.income-text {
+  color: #10b981; /* Xanh lá */
+}
+
+.tile-amount.expense-text {
+  color: #ef4444; /* Đỏ */
+}
+
+/* Tinh chỉnh scrollbar cho danh sách giao dịch bên dưới lịch */
+.transaction-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.transaction-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.transaction-list::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
