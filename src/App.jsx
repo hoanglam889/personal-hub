@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Offcanvas, ListGroup, Modal } from 'react-bootstrap';
 import { Target, Menu, Pin, PinOff, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, Edit3 } from 'lucide-react';
-import { getTargetsWithTodos, updateTodoStatus, pinTarget, deleteTarget, unpinTarget, addTarget, addTodo, deleteTodo, addTransaction, getTodaySummary, updateTransaction, deleteTransaction } from './services/targetService.js';
+import { getTargetsWithTodos, updateTodoStatus, updateTodoDetails, pinTarget, deleteTarget, unpinTarget, addTarget, addTodo, deleteTodo, addTransaction, getTodaySummary, updateTransaction, deleteTransaction } from './services/targetService.js';
 import PinnedTargetCard from './components/PinnedTargetCard';
 import TargetDetail from './components/TargetDetail';
 import FinanceInputCard from './components/FinanceInputCard';
@@ -214,6 +214,26 @@ function App() {
     }
   };
 
+  // Hàm cập nhật chi tiết (tên, ghi chú) của việc nhỏ (to-do)
+  const handleUpdateTodo = async (todoId, taskName, note) => {
+    try {
+      await updateTodoDetails(todoId, taskName, note);
+      
+      const updatedTargets = targets.map(target => ({
+        ...target,
+        todos: target.todos?.map(todo => {
+          if (todo.id === todoId) {
+            return { ...todo, task_name: taskName, note: note };
+          }
+          return todo;
+        }) || []
+      }));
+      setTargets(updatedTargets);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật việc nhỏ ở App:", err);
+    }
+  };
+
   // Hàm thêm mới giao dịch tài chính (Thu hoặc Chi)
   // Nhận vào transactionData: { amount, note, category_name, transaction_date }
   const handleAddTransaction = async (transactionData) => {
@@ -304,6 +324,7 @@ function App() {
             onBack={() => setSelectedTargetId(null)}
             onToggleTodo={handeToggleTodo}
             onAddTodo={handleAddTodo}
+            onUpdateTodo={handleUpdateTodo}
             onDeleteTodo={handleDeleteTodo}
           />
         ) : activeTab === 'calendar' ? (

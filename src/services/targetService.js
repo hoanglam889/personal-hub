@@ -37,6 +37,19 @@ export const updateTodoStatus = async (todoId, isDone) => {
     }
 };
 
+export const updateTodoDetails = async (todoId, taskName, note) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/todos/${todoId}`, {
+            task_name: taskName,
+            note: note
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi gọi API update todo details:", error);
+        throw error;
+    }
+};
+
 // Hàm ghim
 export const pinTarget = async (targetId) => {
     try {

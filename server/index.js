@@ -105,20 +105,32 @@ app.get('/api/targets/pinned', (req, res) => {
 });
 
 
-//6. Route cập nhật trạng thái của 1 task
+//6. Route cập nhật trạng thái hoặc chi tiết (tên, ghi chú) của 1 task
 app.put('/api/todos/:id', (req, res) => {
     const todoId = req.params.id;
-    const { is_done } = req.body; // React sẽ gửi cái này lên: { is_done: 1 } hoặc 0
+    const { is_done, task_name, note } = req.body;
 
-    const query = "UPDATE todos SET is_done = ? WHERE id = ?";
-    
-    db.query(query, [is_done, todoId], (err, result) => {
-        if (err) {
-            console.error("Lỗi khi update database:", err);
-            return res.status(500).json({ error: "Lỗi server rồi Lâm ơi!" });
-        }
-        res.json({ message: "Cập nhật thành công!", id: todoId, status: is_done });
-    });
+    if (task_name !== undefined) {
+        // Cập nhật chi tiết (tên + ghi chú)
+        const query = "UPDATE todos SET task_name = ?, note = ? WHERE id = ?";
+        db.query(query, [task_name, note || null, todoId], (err) => {
+            if (err) {
+                console.error("Lỗi khi cập nhật chi tiết todo:", err);
+                return res.status(500).json({ error: "Lỗi server rồi Lâm ơi!" });
+            }
+            res.json({ message: "Cập nhật chi tiết thành công!", id: Number(todoId), task_name, note });
+        });
+    } else {
+        // Chỉ cập nhật trạng thái hoàn thành
+        const query = "UPDATE todos SET is_done = ? WHERE id = ?";
+        db.query(query, [is_done, todoId], (err) => {
+            if (err) {
+                console.error("Lỗi khi cập nhật trạng thái todo:", err);
+                return res.status(500).json({ error: "Lỗi server rồi Lâm ơi!" });
+            }
+            res.json({ message: "Cập nhật trạng thái thành công!", id: Number(todoId), status: is_done });
+        });
+    }
 });
 
 //7. Thêm API tạo mục tiêu mới

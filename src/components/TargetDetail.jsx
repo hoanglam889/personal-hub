@@ -1,33 +1,50 @@
 import { useState } from 'react';
 import { Button, Card, Badge, ProgressBar, Modal } from 'react-bootstrap';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit2 } from 'lucide-react';
 
-const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDeleteTodo }) => {
+const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onUpdateTodo, onDeleteTodo }) => {
   const [isFormExpanded, setIsFormExpanded] = useState(false); // Trạng thái đóng/mở form nhập việc mới
   const [taskName, setTaskName] = useState('');                 // Lưu tên việc cần làm (task_name)
   const [note, setNote] = useState('');                         // Lưu ghi chú chi tiết (note)
   const [showConfirmModal, setShowConfirmModal] = useState(false); // State hiển thị Modal xác nhận xóa
   const [todoToDelete, setTodoToDelete] = useState(null);         // Lưu to-do đang chuẩn bị xóa
+  const [editingTodo, setEditingTodo] = useState(null);           // Lưu to-do đang chuẩn bị sửa (null nếu thêm mới)
 
-  // Hàm xử lý khi bấm nút "Lưu lại" để thêm công việc mới
+  // Hàm xử lý khi bấm nút "Lưu lại" hoặc "Cập nhật"
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!taskName.trim()) return; // Không cho phép để trống tên việc
     
-    // Gọi hàm onAddTodo được truyền từ App.jsx để cập nhật state và lưu DB
-    onAddTodo(target.id, taskName, note);
+    if (editingTodo) {
+      // Gọi hàm cập nhật chi tiết việc nhỏ
+      onUpdateTodo(editingTodo.id, taskName, note);
+    } else {
+      // Gọi hàm onAddTodo để thêm mới việc nhỏ
+      onAddTodo(target.id, taskName, note);
+    }
     
-    // Reset các trường nhập liệu về rỗng và đóng form
+    // Reset các trường nhập liệu
     setTaskName('');
     setNote('');
+    setEditingTodo(null);
     setIsFormExpanded(false);
   };
 
-  // Hàm xử lý khi bấm nút "Hủy" thêm mới
+  // Hàm xử lý khi bấm nút "Hủy"
   const handleCancel = () => {
     setTaskName('');
     setNote('');
+    setEditingTodo(null);
     setIsFormExpanded(false);
+  };
+
+  // Hàm bắt đầu chế độ sửa việc nhỏ
+  const startEditTodo = (e, item) => {
+    e.stopPropagation(); // Ngăn sự kiện check/uncheck status
+    setEditingTodo(item);
+    setTaskName(item.task_name);
+    setNote(item.note || '');
+    setIsFormExpanded(true);
   };
 
   // Hàm kích hoạt Modal xác nhận xóa khi click icon thùng rác
@@ -135,15 +152,27 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
                       </div>
                     </div>
 
-                    {/* Nút xóa việc nhỏ con */}
-                    <Button 
-                      variant="link" 
-                      className="p-0 text-white-50 opacity-75 hover-opacity-100" 
-                      onClick={(e) => promptDelete(e, item)}
-                      title="Xóa việc này"
-                    >
-                      <Trash2 size={18} />
-                    </Button>
+                    <div className="d-flex gap-2 align-items-center">
+                      {/* Nút sửa việc nhỏ con */}
+                      <Button 
+                        variant="link" 
+                        className="p-0 text-white-50 opacity-75 hover-opacity-100" 
+                        onClick={(e) => startEditTodo(e, item)}
+                        title="Sửa việc này"
+                      >
+                        <Edit2 size={18} />
+                      </Button>
+
+                      {/* Nút xóa việc nhỏ con */}
+                      <Button 
+                        variant="link" 
+                        className="p-0 text-white-50 opacity-75 hover-opacity-100" 
+                        onClick={(e) => promptDelete(e, item)}
+                        title="Xóa việc này"
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -167,7 +196,9 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
             // Form nhập liệu xuất hiện dạng Glassmorphism mờ đẹp mắt
             <form onSubmit={handleSubmit} className="mt-3 p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
               <div className="mb-2">
-                <label className="form-label small text-white-50 mb-1">TÊN CÔNG VIỆC NHỎ</label>
+                <label className="form-label small text-white-50 mb-1">
+                  {editingTodo ? 'SỬA TÊN CÔNG VIỆC NHỎ' : 'TÊN CÔNG VIỆC NHỎ'}
+                </label>
                 <input 
                   type="text" 
                   className="form-control form-control-sm text-white placeholder-white-50" 
@@ -184,7 +215,9 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
               </div>
 
               <div className="mb-3">
-                <label className="form-label small text-white-50 mb-1">GHI CHÚ / MÔ TẢ (NẾU CÓ)</label>
+                <label className="form-label small text-white-50 mb-1">
+                  {editingTodo ? 'SỬA GHI CHÚ / MÔ TẢ' : 'GHI CHÚ / MÔ TẢ (NẾU CÓ)'}
+                </label>
                 <textarea 
                   rows={3}
                   className="form-control form-control-sm text-white placeholder-white-50" 
@@ -202,7 +235,7 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
 
               <div className="d-flex gap-2 justify-content-end">
                 <Button variant="light" size="sm" type="submit">
-                  Lưu lại
+                  {editingTodo ? 'Cập nhật' : 'Lưu lại'}
                 </Button>
                 <Button variant="outline-light" size="sm" type="button" onClick={handleCancel}>
                   Hủy
