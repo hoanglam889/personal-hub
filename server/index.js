@@ -250,9 +250,9 @@ app.delete('/api/todos/:id', (req, res) => {
 
 // 13. API lấy tổng tiền chi tiêu hôm nay (amount < 0)
 app.get('/api/finance/today-spent', (req, res) => {
-  // Lấy tổng số tiền chi (amount < 0) của ngày hôm nay (CURDATE())
-  const sql = "SELECT SUM(ABS(amount)) as today_spent FROM transactions WHERE transaction_date = CURDATE() AND amount < 0";
-  db.query(sql, (err, results) => {
+  const today = req.query.date || new Date().toLocaleDateString('sv-SE');
+  const sql = "SELECT SUM(ABS(amount)) as today_spent FROM transactions WHERE transaction_date = ? AND amount < 0";
+  db.query(sql, [today], (err, results) => {
     if (err) {
       console.error("Lỗi lấy tiền tiêu hôm nay:", err);
       return res.status(500).json({ error: "Lỗi server!" });
@@ -317,29 +317,30 @@ app.post('/api/transactions', (req, res) => {
 
 // 15. API lấy tổng quan tài chính hôm nay: tổng thu, tổng chi và danh sách giao dịch hôm nay
 app.get('/api/finance/today-summary', (req, res) => {
-  const sqlSpent = "SELECT SUM(ABS(amount)) as today_spent FROM transactions WHERE transaction_date = CURDATE() AND amount < 0";
-  const sqlReceived = "SELECT SUM(amount) as today_received FROM transactions WHERE transaction_date = CURDATE() AND amount > 0";
+  const today = req.query.date || new Date().toLocaleDateString('sv-SE');
+  const sqlSpent = "SELECT SUM(ABS(amount)) as today_spent FROM transactions WHERE transaction_date = ? AND amount < 0";
+  const sqlReceived = "SELECT SUM(amount) as today_received FROM transactions WHERE transaction_date = ? AND amount > 0";
   const sqlTransactions = `
     SELECT t.*, c.name as category_name 
     FROM transactions t
     JOIN categories c ON t.category_id = c.id
-    WHERE t.transaction_date = CURDATE()
+    WHERE t.transaction_date = ?
     ORDER BY t.id DESC
   `;
 
-  db.query(sqlSpent, (err, spentResults) => {
+  db.query(sqlSpent, [today], (err, spentResults) => {
     if (err) {
       console.error("Lỗi lấy tổng chi hôm nay:", err);
       return res.status(500).json({ error: "Lỗi server khi lấy tổng chi!" });
     }
 
-    db.query(sqlReceived, (err, receivedResults) => {
+    db.query(sqlReceived, [today], (err, receivedResults) => {
       if (err) {
         console.error("Lỗi lấy tổng thu hôm nay:", err);
         return res.status(500).json({ error: "Lỗi server khi lấy tổng thu!" });
       }
 
-      db.query(sqlTransactions, (err, txResults) => {
+      db.query(sqlTransactions, [today], (err, txResults) => {
         if (err) {
           console.error("Lỗi lấy danh sách giao dịch hôm nay:", err);
           return res.status(500).json({ error: "Lỗi server khi lấy giao dịch!" });

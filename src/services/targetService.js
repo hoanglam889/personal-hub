@@ -124,7 +124,10 @@ export const getTodaySpent = async () => {
 // Hàm lấy tổng quan tài chính hôm nay: tổng chi, tổng thu và danh sách chi tiết các giao dịch
 export const getTodaySummary = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/finance/today-summary`);
+        const localDateStr = new Date().toLocaleDateString('sv-SE');
+        const response = await axios.get(`${BASE_URL}/finance/today-summary`, {
+            params: { date: localDateStr }
+        });
         return response.data; // Trả về { today_spent, today_received, transactions }
     } catch (error) {
         console.error("Lỗi service khi lấy tổng quan thu chi hôm nay:", error);
