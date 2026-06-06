@@ -62,7 +62,13 @@ const PinnedTargetCard = ({ targets, progress, onToggle }) => {
                                     </span>
                                     
                                     {item.note && (
-                                        <small style={{ fontSize: '0.8rem', opacity: 0.5, fontStyle: 'italic', marginTop: '3px' }}>
+                                        <small style={{ 
+                                            fontSize: '0.8rem', 
+                                            opacity: 0.5, 
+                                            fontStyle: 'italic', 
+                                            marginTop: '3px',
+                                            whiteSpace: 'pre-line'
+                                        }}>
                                             • {item.note}
                                         </small>
                                     )}

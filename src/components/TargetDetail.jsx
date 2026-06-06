@@ -122,7 +122,13 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
                         </span>
                         
                         {item.note && (
-                          <small style={{ fontSize: '0.85rem', opacity: 0.6, fontStyle: 'italic', marginTop: '3px' }}>
+                          <small style={{ 
+                            fontSize: '0.85rem', 
+                            opacity: 0.6, 
+                            fontStyle: 'italic', 
+                            marginTop: '3px',
+                            whiteSpace: 'pre-line'
+                          }}>
                             • {item.note}
                           </small>
                         )}
@@ -179,16 +185,17 @@ const TargetDetail = ({ target, progress, onBack, onToggleTodo, onAddTodo, onDel
 
               <div className="mb-3">
                 <label className="form-label small text-white-50 mb-1">GHI CHÚ / MÔ TẢ (NẾU CÓ)</label>
-                <input 
-                  type="text" 
+                <textarea 
+                  rows={3}
                   className="form-control form-control-sm text-white placeholder-white-50" 
-                  placeholder="Ví dụ: Đọc kỹ phần hooks..." 
+                  placeholder="Ví dụ:&#10;- Đọc kỹ phần hooks&#10;- Ghi lại bài tập thực hành..." 
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   style={{ 
                     backgroundColor: 'rgba(255, 255, 255, 0.1)', 
                     border: '1px solid rgba(255, 255, 255, 0.25)',
-                    color: '#ffffff'
+                    color: '#ffffff',
+                    resize: 'none'
                   }}
                 />
               </div>
